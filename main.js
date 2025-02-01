@@ -1,6 +1,6 @@
 import banner from "./utils/banner.js";
 import log from "./utils/logger.js";
-import { delay, readFile } from "./utils/functions.js";
+import { delay, readFile, checkMainIP } from "./utils/functions.js";
 import TeafiConnection from "./utils/teafi.js";
 import chalk from "chalk";
 
@@ -33,8 +33,13 @@ async function main() {
       try {
         const teafi = new TeafiConnection(proxy, privateKey);
 
-        const proxyUrl = new URL(proxy);
-        const proxyHost = proxyUrl.hostname;
+        let proxyHost;
+        if (proxy) {
+          const proxyUrl = new URL(proxy);
+          proxyHost = proxyUrl.hostname;
+        } else {
+          proxyHost = await checkMainIP();
+        }
 
         log.info("-".repeat(100));
         log.info("Proxy using:", proxyHost);
